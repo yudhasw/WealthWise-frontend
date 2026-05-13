@@ -1,6 +1,7 @@
 import React from "react";
 import Sidebar from "../components/Sidebar";
 import LoadingOverlay from "../components/LoadingOverlay";
+import Header from "../components/Header";
 
 export default function MainLayout({ children, isLoading = false }) {
   return (

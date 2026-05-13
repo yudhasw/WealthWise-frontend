@@ -1,5 +1,8 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { Bell, User } from "lucide-react";
 import MainLayout from "../../layouts/MainLayout";
+import Header from "../../components/Header";
 import api from "../../api/axios";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import TransactionTable from "../../components/TransactionTable";
@@ -65,51 +68,21 @@ export default function Dashboard() {
 
   return (
     <MainLayout isLoading={isLoading}>
-      {/* HEADER */}
-      <header className="flex justify-between items-center mb-8">
-        <h2 className="text-2xl font-semibold text-emerald-500">Overview</h2>
-        <div className="flex items-center gap-5">
-          <button className="text-gray-400 hover:text-white transition-colors">
-            <svg
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={2}
-              stroke="currentColor"
-              className="w-6 h-6"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-              />
-            </svg>
-          </button>
-          <button className="p-2 bg-[#2A2A2A] rounded-full text-gray-400 hover:text-white transition-colors">
-            <svg
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={2}
-              stroke="currentColor"
-              className="w-5 h-5"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-          </button>
-          <div className="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center overflow-hidden border-2 border-gray-800">
-            <svg
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              className="w-6 h-6 text-blue-300 mt-2"
-            >
-              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-            </svg>
-          </div>
-        </div>
-      </header>
+      <Header
+          title="Dashboard"
+          rightSection={
+            <div className="flex items-center gap-5">
+              <Bell size={18} className="text-gray-400" />
+
+              <Link
+                to="/profile"
+                className="w-10 h-10 rounded-full bg-[#1F2937] border border-white/10 flex items-center justify-center hover:bg-[#374151] transition"
+              >
+                <User size={18} className="text-[#F4B183]" />
+              </Link>
+            </div>
+          }
+        />
 
       {/* TOP CARDS SECTION */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
@@ -246,7 +219,7 @@ export default function Dashboard() {
                 Receipt
               </span>
             </button>
-            <button className="flex-1 bg-[#102A20] border border-emerald-500/20 rounded-2xl p-6 flex flex-col items-center justify-center hover:bg-[#15382a] transition-all shadow-md">
+            <Link to="/smart-planning" className="flex-1 bg-[#102A20] border border-emerald-500/20 rounded-2xl p-6 flex flex-col items-center justify-center hover:bg-[#15382a] transition-all shadow-md">
               <div className="bg-white p-3 rounded-full mb-3 shadow-sm">
                 <svg
                   fill="none"
@@ -263,9 +236,9 @@ export default function Dashboard() {
                 </svg>
               </div>
               <span className="text-emerald-500 font-medium text-sm">
-                Ask AI Finance Planner
+                Open Smart Planning
               </span>
-            </button>
+            </Link>
           </div>
         </div>
       </div>
