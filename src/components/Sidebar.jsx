@@ -289,7 +289,7 @@ export default function Sidebar() {
           {openMenus.analytics && (
             <div className="ml-11 mt-1 space-y-1">
               <Link
-                to="/stats"
+                to="/statistics"
                 className={`block px-3 py-2 text-sm rounded-lg transition-colors ${isActive("/stats") ? "text-emerald-500 font-medium" : "text-gray-400 hover:text-white"}`}
               >
                 <span className="flex items-center gap-3">
