@@ -4,9 +4,8 @@ import api from "../api/axios";
 
 export default function Sidebar() {
   const navigate = useNavigate();
-  const location = useLocation(); // Untuk mendeteksi halaman saat ini
-  
-  // State untuk mengontrol menu mana yang sedang terbuka (collapse/expand)
+  const location = useLocation();
+
   const [openMenus, setOpenMenus] = useState({
     financials: true,
     manage: true,
@@ -31,12 +30,14 @@ export default function Sidebar() {
     }
   };
 
-  // Fungsi bantuan untuk mengecek apakah path saat ini aktif
-  const isActive = (path) => location.pathname === path;
+  const isActive = (path) => {
+    return (
+      location.pathname === path || location.pathname.startsWith(`${path}/`)
+    );
+  };
 
   return (
     <aside className="w-64 bg-[#2A2C30] border-r border-gray-800 flex flex-col h-screen py-6 px-5 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-      
       {/* Header / Logo */}
       <div className="flex items-center gap-3 mb-8 px-2">
         <div className="w-10 h-10 bg-white text-black font-bold flex items-center justify-center rounded-full text-xs">
@@ -52,18 +53,30 @@ export default function Sidebar() {
         </div>
       </div>
 
-      {/* Tombol Add Transaction */}
-      <button className="w-full bg-[#0E7958] hover:bg-[#0b6348] text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center gap-2 mb-6 transition-colors">
-        <svg fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+      {/* Add Transaction */}
+      <Link
+        to="/transactions/add"
+        className="w-full bg-[#0E7958] hover:bg-[#0b6348] text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center gap-2 mb-6 transition-colors"
+      >
+        <svg
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={2}
+          stroke="currentColor"
+          className="w-5 h-5"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M12 4.5v15m7.5-7.5h-15"
+          />
         </svg>
         Add Transaction
-      </button>
+      </Link>
 
       {/* Navigasi Utama */}
       <nav className="flex-1 space-y-1">
-        
-        {/* Item: Dashboard (Tanpa Child) */}
+        {/* Section: Dashboard */}
         <Link
           to="/dashboard"
           className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all ${
@@ -73,108 +86,273 @@ export default function Sidebar() {
           }`}
         >
           <svg fill="currentColor" viewBox="0 0 20 20" className="w-5 h-5">
-            <path fillRule="evenodd" d="M3 4a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm2 2V5h2v1H5zM3 13a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1v-3zm2 2v-1h2v1H5zM11 4a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1h-4a1 1 0 01-1-1V4zm2 2V5h2v1h-2zM11 13a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1h-4a1 1 0 01-1-1v-3zm2 2v-1h2v1h-2z" clipRule="evenodd" />
+            <path
+              fillRule="evenodd"
+              d="M3 4a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm2 2V5h2v1H5zM3 13a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1v-3zm2 2v-1h2v1H5zM11 4a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1h-4a1 1 0 01-1-1V4zm2 2V5h2v1h-2zM11 13a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1h-4a1 1 0 01-1-1v-3zm2 2v-1h2v1h-2z"
+              clipRule="evenodd"
+            />
           </svg>
           Dashboard
         </Link>
 
-        {/* --- Section: Financials --- */}
+        {/* Section: Financials */}
         <div className="pt-2">
           <button
             onClick={() => toggleMenu("financials")}
             className="w-full flex items-center gap-3 px-4 py-2.5 text-gray-300 hover:text-white transition-colors"
           >
             <svg
-              fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2}
+              stroke="currentColor"
               className={`w-4 h-4 transition-transform duration-200 ${openMenus.financials ? "rotate-0" : "-rotate-90"}`}
             >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+              />
             </svg>
             <span className="font-medium">Financials</span>
           </button>
-          
+
           {/* Child Items: Financials */}
           {openMenus.financials && (
             <div className="ml-11 mt-1 space-y-1">
-              <Link to="/transactions" className={`block px-3 py-2 text-sm rounded-lg transition-colors ${isActive("/transactions") ? "text-emerald-500 font-medium" : "text-gray-400 hover:text-white"}`}>
-                <span className="flex items-center gap-3"><span className="text-lg">🧾</span> Transactions</span>
+              <Link
+                to="/transactions"
+                className={`block px-3 py-2 text-sm rounded-lg transition-colors ${isActive("/transactions") ? "text-emerald-500 font-medium" : "text-gray-400 hover:text-white"}`}
+              >
+                <span className="flex items-center gap-3">
+                  <svg
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-5 h-5"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
+                    />
+                  </svg>
+                  Transactions
+                </span>
               </Link>
-              <Link to="/smart-planning" className={`block px-3 py-2 text-sm rounded-lg transition-colors ${isActive("/smart-planning") ? "text-emerald-500 font-medium" : "text-gray-400 hover:text-white"}`}>
-                <span className="flex items-center gap-3"><span className="text-lg">⚡</span> Smart Planning</span>
+              <Link
+                to="/smart-planning"
+                className={`block px-3 py-2 text-sm rounded-lg transition-colors ${isActive("/smart-planning") ? "text-emerald-500 font-medium" : "text-gray-400 hover:text-white"}`}
+              >
+                <span className="flex items-center gap-3">
+                  <svg
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-5 h-5"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"
+                    />
+                  </svg>
+                  Smart Planning
+                </span>
               </Link>
             </div>
           )}
         </div>
 
-        {/* --- Section: Manage --- */}
+        {/* Section: Manage */}
         <div className="pt-2">
           <button
             onClick={() => toggleMenu("manage")}
             className="w-full flex items-center gap-3 px-4 py-2.5 text-gray-300 hover:text-white transition-colors"
           >
             <svg
-              fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2}
+              stroke="currentColor"
               className={`w-4 h-4 transition-transform duration-200 ${openMenus.manage ? "rotate-0" : "-rotate-90"}`}
             >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+              />
             </svg>
             <span className="font-medium">Manage</span>
           </button>
-          
+
           {/* Child Items: Manage */}
           {openMenus.manage && (
             <div className="ml-11 mt-1 space-y-1">
-              <Link to="/accounts" className={`block px-3 py-2 text-sm rounded-lg transition-colors ${isActive("/accounts") ? "text-emerald-500 font-medium" : "text-gray-400 hover:text-white"}`}>
-                <span className="flex items-center gap-3"><span className="text-lg">🏛️</span> Accounts</span>
+              <Link
+                to="/accounts"
+                className={`block px-3 py-2 text-sm rounded-lg transition-colors ${isActive("/accounts") ? "text-emerald-500 font-medium" : "text-gray-400 hover:text-white"}`}
+              >
+                <span className="flex items-center gap-3">
+                  <svg
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-5 h-5"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.315 48.315 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75z"
+                    />
+                  </svg>
+                  Accounts
+                </span>
               </Link>
-              <Link to="/budgets" className={`block px-3 py-2 text-sm rounded-lg transition-colors ${isActive("/budgets") ? "text-emerald-500 font-medium" : "text-gray-400 hover:text-white"}`}>
-                <span className="flex items-center gap-3"><span className="text-lg">💵</span> Budgets</span>
+              <Link
+                to="/budgets"
+                className={`block px-3 py-2 text-sm rounded-lg transition-colors ${isActive("/budgets") ? "text-emerald-500 font-medium" : "text-gray-400 hover:text-white"}`}
+              >
+                <span className="flex items-center gap-3">
+                  <svg
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-5 h-5"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"
+                    />
+                  </svg>
+                  Budgets
+                </span>
               </Link>
-              <Link to="/categories" className={`block px-3 py-2 text-sm rounded-lg transition-colors ${isActive("/categories") ? "text-emerald-500 font-medium" : "text-gray-400 hover:text-white"}`}>
-                <span className="flex items-center gap-3"><span className="text-lg">🔠</span> Categories</span>
+              <Link
+                to="/categories"
+                className={`block px-3 py-2 text-sm rounded-lg transition-colors ${isActive("/categories") ? "text-emerald-500 font-medium" : "text-gray-400 hover:text-white"}`}
+              >
+                <span className="flex items-center gap-3">
+                  <svg
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-5 h-5"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z"
+                    />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M6 6h.008v.008H6V6z"
+                    />
+                  </svg>
+                  Categories
+                </span>
               </Link>
             </div>
           )}
         </div>
 
-        {/* --- Section: Analytics --- */}
+        {/* Section: Analytics */}
         <div className="pt-2">
           <button
             onClick={() => toggleMenu("analytics")}
             className="w-full flex items-center gap-3 px-4 py-2.5 text-gray-300 hover:text-white transition-colors"
           >
             <svg
-              fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2}
+              stroke="currentColor"
               className={`w-4 h-4 transition-transform duration-200 ${openMenus.analytics ? "rotate-0" : "-rotate-90"}`}
             >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+              />
             </svg>
             <span className="font-medium">Analytics</span>
           </button>
-          
+
           {/* Child Items: Analytics */}
           {openMenus.analytics && (
             <div className="ml-11 mt-1 space-y-1">
-              <Link to="/stats" className={`block px-3 py-2 text-sm rounded-lg transition-colors ${isActive("/stats") ? "text-emerald-500 font-medium" : "text-gray-400 hover:text-white"}`}>
-                <span className="flex items-center gap-3"><span className="text-lg">📈</span> Stats</span>
+              <Link
+                to="/stats"
+                className={`block px-3 py-2 text-sm rounded-lg transition-colors ${isActive("/stats") ? "text-emerald-500 font-medium" : "text-gray-400 hover:text-white"}`}
+              >
+                <span className="flex items-center gap-3">
+                  <svg
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-5 h-5"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"
+                    />
+                  </svg>
+                  Stats
+                </span>
               </Link>
-              <Link to="/financial-health" className={`block px-3 py-2 text-sm rounded-lg transition-colors ${isActive("/financial-health") ? "text-emerald-500 font-medium" : "text-gray-400 hover:text-white"}`}>
-                <span className="flex items-center gap-3"><span className="text-lg">📊</span> Financial Health</span>
+              <Link
+                to="/financial-health"
+                className={`block px-3 py-2 text-sm rounded-lg transition-colors ${isActive("/financial-health") ? "text-emerald-500 font-medium" : "text-gray-400 hover:text-white"}`}
+              >
+                <span className="flex items-center gap-3">
+                  <svg
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-5 h-5"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"
+                    />
+                  </svg>
+                  Financial Health
+                </span>
               </Link>
             </div>
           )}
         </div>
-
       </nav>
 
-      {/* Bagian Bawah: Support & Logout */}
+      {/* Support & Logout */}
       <div className="pt-6 mt-6 border-t border-gray-700 space-y-1">
         <Link
           to="/support"
           className="w-full flex items-center gap-3 px-4 py-3 text-gray-300 hover:text-white transition-colors rounded-xl hover:bg-gray-800/50"
         >
-          <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
+          <svg
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="w-5 h-5"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z"
+            />
           </svg>
           <span className="font-medium text-sm">Support</span>
         </Link>
@@ -182,13 +360,22 @@ export default function Sidebar() {
           onClick={handleLogout}
           className="w-full flex items-center gap-3 px-4 py-3 text-gray-300 hover:text-red-400 transition-colors rounded-xl hover:bg-red-500/10"
         >
-          <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
+          <svg
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="w-5 h-5"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75"
+            />
           </svg>
           <span className="font-medium text-sm">Logout</span>
         </button>
       </div>
-
     </aside>
   );
 }

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import api from "../api/axios";
+import api from "../../api/axios";
 
 export default function Register() {
   const [name, setName] = useState("");
@@ -9,6 +9,7 @@ export default function Register() {
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
 
   const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState({});
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
@@ -17,13 +18,13 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validasi dasar di frontend sebelum dikirim ke backend
     if (password !== passwordConfirmation) {
       setErrorMessage("Passwords do not match. Please try again.");
       return;
     }
 
     setIsLoading(true);
+    setErrors({});
     setErrorMessage("");
     setSuccessMessage("");
 
@@ -41,13 +42,18 @@ export default function Register() {
         "Account created successfully! Redirecting to login...",
       );
 
-      // Beri jeda 2 detik agar user bisa membaca pesan sukses, lalu lempar ke login
       setTimeout(() => navigate("/login"), 2000);
     } catch (error) {
-      setErrorMessage(
-        error.response?.data?.message ||
-          "Registration failed. Please check your details.",
-      );
+      if (error.response && error.response.status === 422) {
+        const validationErrors =
+          error.response.data.errors || error.response.data;
+        setErrors(validationErrors);
+      } else {
+        setErrorMessage(
+          error.response?.data?.message ||
+            "Terjadi kesalahan saat mendaftar. Silakan coba lagi.",
+        );
+      }
     } finally {
       setIsLoading(false);
     }
@@ -159,6 +165,13 @@ export default function Register() {
                 placeholder="name@company.com"
               />
             </div>
+
+            {/* Error jika email sudah digunakan*/}
+            {errors.email && (
+              <p className="text-red-500 text-xs mt-1 font-medium">
+                {errors.email[0]}
+              </p>
+            )}
 
             {/* Password Grid */}
             <div className="grid grid-cols-2 gap-4">

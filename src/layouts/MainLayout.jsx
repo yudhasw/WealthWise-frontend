@@ -1,10 +1,16 @@
+import React from "react";
 import Sidebar from "../components/Sidebar";
+import LoadingOverlay from "../components/LoadingOverlay";
 
-export default function MainLayout({ children }) {
+export default function MainLayout({ children, isLoading = false }) {
   return (
-    <div className="flex h-screen bg-wealthwise-bg text-white overflow-hidden">
+    <div className="flex h-screen overflow-hidden bg-[#191C1E] text-white">
       <Sidebar />
-      <main className="flex-1 overflow-y-auto p-10">{children}</main>
+
+      <main className="flex-1 overflow-y-auto p-10 relative">
+        {isLoading && <LoadingOverlay />}
+        {children}
+      </main>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import api from "../api/axios";
+import api from "../../api/axios";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -16,7 +16,7 @@ export default function Login() {
 
     try {
       const response = await api.post("/login", { email, password });
-      localStorage.setItem("wealthwise_token", response.data.token);
+      localStorage.setItem("wealthwise_token", response.data.access_token);
       navigate("/dashboard");
     } catch (error) {
       setErrorMessage(
