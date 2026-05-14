@@ -5,6 +5,7 @@ import DashboardPage from "./pages/dashboard/DashboardPage";
 import TransactionsPage from "./pages/transactions/TransactionPage";
 import AddTransactionsPage from "./pages/transactions/AddTransactionPage";
 import ProfilePage from "./pages/profile/ProfilePage";
+import FinancialHealth from "./pages/financial-health/FinancialHealthPage";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="/transactions" element={<TransactionsPage />} />
         <Route path="/transactions/add" element={<AddTransactionsPage />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/financial-health" element={<FinancialHealth />} />
       </Routes>
     </BrowserRouter>
   );
