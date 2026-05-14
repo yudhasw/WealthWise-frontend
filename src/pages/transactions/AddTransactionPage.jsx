@@ -1,18 +1,20 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import MainLayout from "../../layouts/MainLayout";
 import api from "../../api/axios";
 
 export default function AddTransaction() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const prefilled = location.state?.prefilled;
 
   const [form, setForm] = useState({
-    description: "",
-    transaction_date: "",
-    type: "EXPENSE",
-    amount: "",
-    category_id: "",
-    account_id: "",
+    description:      prefilled?.description      ?? "",
+    transaction_date: prefilled?.transaction_date ?? "",
+    type:             prefilled?.type             ?? "EXPENSE",
+    amount:           prefilled?.amount != null   ? String(prefilled.amount) : "",
+    category_id:      "",
+    account_id:       "",
   });
 
   const [accounts, setAccounts] = useState([]);
@@ -135,6 +137,18 @@ export default function AddTransaction() {
         <p className="text-sm text-gray-500 mb-7">
           Adjust the details of your transaction to maintain an accurate ledger.
         </p>
+
+        {/* Scan Receipt banner */}
+        {prefilled && (
+          <div className="flex items-center gap-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl px-4 py-3 mb-6">
+            <svg fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 text-emerald-400 shrink-0">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 8V6a2 2 0 012-2h2M3 16v2a2 2 0 002 2h2m10-14h2a2 2 0 012 2v2m-2 10h-2a2 2 0 01-2-2v-2M8 12h8m-4-4v8" />
+            </svg>
+            <p className="text-emerald-300 text-sm">
+              Data diisi otomatis dari hasil scan struk. Periksa dan sesuaikan jika perlu.
+            </p>
+          </div>
+        )}
 
         {/* FORM CARD */}
         <div className="bg-[#2C2F32] border border-[#262b2f] rounded-2xl p-8">
