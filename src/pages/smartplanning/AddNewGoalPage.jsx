@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import React, { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { CheckCircle2, AlertCircle, Sparkles } from "lucide-react";
@@ -42,10 +41,11 @@ function calculateAvailablePlans(targetAmount, startDate, targetDate) {
     });
   }
   if (diffDays >= 30) {
-    const s = new Date(startDate), e = new Date(targetDate);
+    const s = new Date(startDate),
+      e = new Date(targetDate);
     const months = Math.max(
       1,
-      (e.getFullYear() - s.getFullYear()) * 12 + (e.getMonth() - s.getMonth())
+      (e.getFullYear() - s.getFullYear()) * 12 + (e.getMonth() - s.getMonth()),
     );
     plans.push({
       plan: "MONTHLY",
@@ -59,17 +59,10 @@ function calculateAvailablePlans(targetAmount, startDate, targetDate) {
 // ─────────────────────────────────────────────────────────────────────────────
 // COMPONENT
 // ─────────────────────────────────────────────────────────────────────────────
-=======
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import Sidebar from "../../components/Sidebar";
-import api from "../../api/axios"; // Pastikan import axios Anda
->>>>>>> 8425be7d872f45da42c1e6d89855a8a79b1c2d92
 
 const AddNewGoalPage = () => {
   const navigate = useNavigate();
 
-<<<<<<< HEAD
   const today = new Date().toISOString().split("T")[0];
   // Default target date = 6 bulan dari sekarang
   const defaultTarget = new Date(new Date().setMonth(new Date().getMonth() + 6))
@@ -86,10 +79,10 @@ const AddNewGoalPage = () => {
     color_theme: "#067A55",
   });
 
-  const [errors, setErrors]     = useState({});
+  const [errors, setErrors] = useState({});
   const [apiError, setApiError] = useState("");
-  const [loading, setLoading]   = useState(false);
-  const [success, setSuccess]   = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   // ── Derived Plans ──
   const availablePlans = useMemo(() => {
@@ -108,14 +101,17 @@ const AddNewGoalPage = () => {
     if (!stillValid) {
       for (const pref of ["MONTHLY", "WEEKLY", "DAILY"]) {
         const found = availablePlans.find((p) => p.plan === pref);
-        if (found) { setForm((f) => ({ ...f, filling_plan: found.plan })); break; }
+        if (found) {
+          setForm((f) => ({ ...f, filling_plan: found.plan }));
+          break;
+        }
       }
     }
   }, [availablePlans]);
 
   const selectedPlan = useMemo(
     () => availablePlans.find((p) => p.plan === form.filling_plan) || null,
-    [availablePlans, form.filling_plan]
+    [availablePlans, form.filling_plan],
   );
 
   // ── Handlers ──
@@ -133,14 +129,18 @@ const AddNewGoalPage = () => {
 
   const validate = () => {
     const e = {};
-    if (!form.goal_name.trim())   e.goal_name    = "Goal name wajib diisi.";
+    if (!form.goal_name.trim()) e.goal_name = "Goal name wajib diisi.";
     if (!form.target_amount || parseFloat(form.target_amount) < 1000)
-                                  e.target_amount = "Minimum Rp 1.000.";
-    if (!form.start_date)         e.start_date   = "Wajib diisi.";
-    if (!form.target_date)        e.target_date  = "Wajib diisi.";
-    if (form.target_date && form.start_date && form.target_date <= form.start_date)
-                                  e.target_date  = "Harus setelah start date.";
-    if (!form.filling_plan)       e.filling_plan = "Pilih plan tabungan.";
+      e.target_amount = "Minimum Rp 1.000.";
+    if (!form.start_date) e.start_date = "Wajib diisi.";
+    if (!form.target_date) e.target_date = "Wajib diisi.";
+    if (
+      form.target_date &&
+      form.start_date &&
+      form.target_date <= form.start_date
+    )
+      e.target_date = "Harus setelah start date.";
+    if (!form.filling_plan) e.filling_plan = "Pilih plan tabungan.";
     return e;
   };
 
@@ -154,13 +154,13 @@ const AddNewGoalPage = () => {
     setApiError("");
     try {
       await api.post("/goals", {
-        goal_name:     form.goal_name.trim(),
+        goal_name: form.goal_name.trim(),
         target_amount: parseFloat(form.target_amount),
-        start_date:    form.start_date,
-        target_date:   form.target_date,
-        filling_plan:  form.filling_plan,
-        icon:          form.icon,
-        color_theme:   form.color_theme,
+        start_date: form.start_date,
+        target_date: form.target_date,
+        filling_plan: form.filling_plan,
+        icon: form.icon,
+        color_theme: form.color_theme,
       });
       setSuccess(true);
       setTimeout(() => navigate("/smart-planning"), 1200);
@@ -188,12 +188,12 @@ const AddNewGoalPage = () => {
   const ICONS = ["🎯", "🏠", "✈️", "🚗", "💍", "🎓", "💻", "📱", "🏋️", "🎸"];
 
   const COLORS = [
-    { label: "Indigo",  value: "#6366f1" },
-    { label: "Green",   value: "#067A55" },
-    { label: "Rose",    value: "#f43f5e" },
-    { label: "Amber",   value: "#f59e0b" },
-    { label: "Sky",     value: "#0ea5e9" },
-    { label: "Violet",  value: "#8b5cf6" },
+    { label: "Indigo", value: "#6366f1" },
+    { label: "Green", value: "#067A55" },
+    { label: "Rose", value: "#f43f5e" },
+    { label: "Amber", value: "#f59e0b" },
+    { label: "Sky", value: "#0ea5e9" },
+    { label: "Violet", value: "#8b5cf6" },
   ];
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -212,8 +212,12 @@ const AddNewGoalPage = () => {
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
             <div className="bg-[#1A1E24] rounded-2xl p-8 flex flex-col items-center gap-3">
               <CheckCircle2 size={48} className="text-[#067A55]" />
-              <p className="font-black text-lg text-white">Goal Berhasil Dibuat!</p>
-              <p className="text-gray-400 text-sm">Mengarahkan ke dashboard...</p>
+              <p className="font-black text-lg text-white">
+                Goal Berhasil Dibuat!
+              </p>
+              <p className="text-gray-400 text-sm">
+                Mengarahkan ke dashboard...
+              </p>
             </div>
           </div>
         )}
@@ -241,11 +245,13 @@ const AddNewGoalPage = () => {
         {/* Form Card — sama persis style gambar 1 */}
         <div className="px-8 pb-10">
           <div className="bg-[#1A1E24] rounded-2xl border border-white/5 p-8 max-w-2xl space-y-6">
-
             {/* API Error */}
             {apiError && (
               <div className="flex items-start gap-2 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3">
-                <AlertCircle size={15} className="text-red-400 shrink-0 mt-0.5" />
+                <AlertCircle
+                  size={15}
+                  className="text-red-400 shrink-0 mt-0.5"
+                />
                 <p className="text-red-300 text-sm">{apiError}</p>
               </div>
             )}
@@ -264,9 +270,11 @@ const AddNewGoalPage = () => {
                   placeholder=""
                   className={`w-full bg-[#252930] border rounded-xl px-4 py-3 text-white text-sm
                     outline-none transition placeholder-gray-600
-                    ${errors.goal_name
-                      ? "border-red-500/60"
-                      : "border-white/8 focus:border-[#067A55]/50"}`}
+                    ${
+                      errors.goal_name
+                        ? "border-red-500/60"
+                        : "border-white/8 focus:border-[#067A55]/50"
+                    }`}
                 />
                 {errors.goal_name && (
                   <p className="text-red-400 text-[11px]">{errors.goal_name}</p>
@@ -285,18 +293,26 @@ const AddNewGoalPage = () => {
                   <input
                     type="text"
                     inputMode="numeric"
-                    value={form.target_amount ? Number(form.target_amount).toLocaleString("id-ID") : ""}
+                    value={
+                      form.target_amount
+                        ? Number(form.target_amount).toLocaleString("id-ID")
+                        : ""
+                    }
                     onChange={handleAmountInput}
                     placeholder="0"
                     className={`w-full bg-[#252930] border rounded-xl pl-10 pr-4 py-3 text-white text-sm
                       outline-none transition placeholder-gray-600
-                      ${errors.target_amount
-                        ? "border-red-500/60"
-                        : "border-white/8 focus:border-[#067A55]/50"}`}
+                      ${
+                        errors.target_amount
+                          ? "border-red-500/60"
+                          : "border-white/8 focus:border-[#067A55]/50"
+                      }`}
                   />
                 </div>
                 {errors.target_amount && (
-                  <p className="text-red-400 text-[11px]">{errors.target_amount}</p>
+                  <p className="text-red-400 text-[11px]">
+                    {errors.target_amount}
+                  </p>
                 )}
               </div>
             </div>
@@ -324,195 +340,31 @@ const AddNewGoalPage = () => {
                   ))}
                 </div>
               ) : (
-                <div className={`grid gap-3 ${availablePlans.length === 1 ? "grid-cols-1" : availablePlans.length === 2 ? "grid-cols-2" : "grid-cols-3"}`}>
+                <div
+                  className={`grid gap-3 ${availablePlans.length === 1 ? "grid-cols-1" : availablePlans.length === 2 ? "grid-cols-2" : "grid-cols-3"}`}
+                >
                   {availablePlans.map((plan) => (
                     <button
                       key={plan.plan}
                       type="button"
                       onClick={() => handleChange("filling_plan", plan.plan)}
                       className={`py-3 rounded-xl text-sm font-bold transition-all border
-                        ${form.filling_plan === plan.plan
-                          ? "bg-[#067A55] border-[#067A55] text-white"
-                          : "bg-[#252930] border-white/8 text-gray-300 hover:border-white/20"}`}
-=======
-  // State untuk form
-  const [goalName, setGoalName] = useState("");
-  const [goalAmount, setGoalAmount] = useState("");
-  const [activePlan, setActivePlan] = useState("DAILY"); // Sesuaikan value dengan ENUM database (huruf besar)
-  const [startDate, setStartDate] = useState(
-    new Date().toISOString().split("T")[0] // Default hari ini
-  );
-  const [icon, setIcon] = useState("Target"); // Default icon
-
-  // State untuk UI Status
-  const [isSaving, setIsSaving] = useState(false);
-  const [error, setError] = useState(null);
-
-  // Sesuaikan nilai yang akan dikirim ke database
-  const plans = [
-    { label: "Daily", value: "DAILY" },
-    { label: "Monthly", value: "MONTHLY" },
-    { label: "Yearly", value: "YEARLY" },
-  ];
-
-  // Pilihan ikon sederhana untuk dipilih
-  const iconOptions = ["Target", "Laptop", "Plane", "Car", "Home", "ShieldCheck"];
-
-  // Fungsi format Rupiah
-  const formatRupiah = (value) => {
-    return new Intl.NumberFormat("id-ID", {
-      style: "currency",
-      currency: "IDR",
-      minimumFractionDigits: 0,
-    }).format(value);
-  };
-
-  // Hitung amount per period
-  let amountPerPeriod = 0;
-  if (goalAmount) {
-    const amount = parseFloat(goalAmount);
-    if (activePlan === "DAILY") amountPerPeriod = amount / 365;
-    else if (activePlan === "MONTHLY") amountPerPeriod = amount / 12;
-    else amountPerPeriod = amount; // Yearly
-  }
-
-  // Handle submit
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError(null);
-
-    if (!goalName.trim() || !goalAmount || !startDate) {
-      setError("Please fill in all required fields");
-      return;
-    }
-
-    setIsSaving(true);
-
-    try {
-      // Sesuaikan payload dengan struktur Validasi di Controller Laravel
-      const payload = {
-        goal_name: goalName,
-        target_amount: parseFloat(goalAmount),
-        filling_plan: activePlan,
-        amount_per_period: amountPerPeriod,
-        start_date: startDate,
-        icon: icon,
-        color_theme: "emerald", // Bisa dibikin dinamis nanti
-      };
-
-      await api.post("/goals", payload);
-      navigate("/smart-planning");
-    } catch (err) {
-      console.error(err);
-      setError("Failed to save goal. Please check your connection or data.");
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  return (
-    <div className="h-screen bg-[#121417] flex overflow-hidden font-sans">
-      {/* SIDEBAR SECTION */}
-      <div className="relative z-20">
-        <Sidebar />
-      </div>
-
-      {/* MAIN CONTENT SECTION */}
-      <main className="flex-1 relative z-10 flex flex-col min-w-0 overflow-y-auto">
-        <Header title="Smart Planning" />
-
-        {/* CONTAINER UNTUK MENENGAHKAN FORM */}
-        <div className="flex-1 flex flex-col items-center justify-center p-8">
-          {/* WRAPPER KONTEN */}
-          <div className="w-full max-w-2xl pointer-events-auto">
-            {/* BREADCRUMB */}
-            <nav className="text-[10px] font-bold text-gray-500 mb-2 uppercase tracking-widest">
-              Smart Planning &gt; <span className="text-[#0FA36B]">Add New Goal</span>
-            </nav>
-
-            <h2 className="text-[#0FA36B] text-3xl font-black mb-1">
-              Add New Goal
-            </h2>
-            <p className="text-gray-400 text-xs mb-8 font-medium">
-              Isi detail di bawah untuk membuat target tabungan baru.
-            </p>
-
-            {/* FORM CARD */}
-            <form
-              onSubmit={handleSubmit}
-              className="bg-[#1E2125] rounded-3xl p-10 shadow-2xl border border-white/5"
-            >
-              {error && (
-                <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-3 rounded-xl mb-6 text-sm">
-                  {error}
-                </div>
-              )}
-
-              <div className="grid grid-cols-2 gap-6 mb-6">
-                {/* GOAL NAME */}
-                <div className="flex flex-col">
-                  <label className="text-[10px] font-black text-gray-400 uppercase mb-2 tracking-tighter">
-                    Goal Name
-                  </label>
-                  <input
-                    type="text"
-                    value={goalName}
-                    onChange={(e) => setGoalName(e.target.value)}
-                    className="bg-[#EBEEF2] text-[#121417] rounded-xl py-3 px-4 font-bold text-sm outline-none focus:ring-2 focus:ring-[#0FA36B]/50 transition-all"
-                    placeholder="Contoh: Tabungan Laptop"
-                    required
-                  />
-                </div>
-
-                {/* GOAL AMOUNT */}
-                <div className="flex flex-col">
-                  <label className="text-[10px] font-black text-gray-400 uppercase mb-2 tracking-tighter">
-                    Target Amount
-                  </label>
-                  <div className="relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#121417] font-bold text-sm">
-                      Rp
-                    </span>
-                    <input
-                      type="number"
-                      value={goalAmount}
-                      onChange={(e) => setGoalAmount(e.target.value)}
-                      className="w-full bg-[#EBEEF2] text-[#121417] rounded-xl py-3 pl-10 pr-4 font-bold text-sm outline-none focus:ring-2 focus:ring-[#0FA36B]/50"
-                      placeholder="0"
-                      min="1"
-                      required
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* FILLING PLAN SELECTION */}
-              <div className="mb-8">
-                <label className="block text-[10px] font-black text-gray-400 uppercase mb-3 tracking-tighter">
-                  Filling Plan (Menabung per)
-                </label>
-                <div className="flex gap-3 relative z-30">
-                  {plans.map((plan) => (
-                    <button
-                      key={plan.value}
-                      type="button"
-                      onClick={() => setActivePlan(plan.value)}
-                      className={`flex-1 py-3 rounded-xl font-bold text-sm cursor-pointer transition-all duration-200 ${
-                        activePlan === plan.value
-                          ? "bg-[#067A55] text-white shadow-lg shadow-[#067A55]/30 scale-105"
-                          : "bg-[#EBEEF2] text-[#121417] hover:bg-white hover:scale-102"
-                      }`}
->>>>>>> 8425be7d872f45da42c1e6d89855a8a79b1c2d92
+                        ${
+                          form.filling_plan === plan.plan
+                            ? "bg-[#067A55] border-[#067A55] text-white"
+                            : "bg-[#252930] border-white/8 text-gray-300 hover:border-white/20"
+                        }`}
                     >
                       {plan.label}
                     </button>
                   ))}
                 </div>
-<<<<<<< HEAD
               )}
 
               {errors.filling_plan && (
-                <p className="text-red-400 text-[11px]">{errors.filling_plan}</p>
+                <p className="text-red-400 text-[11px]">
+                  {errors.filling_plan}
+                </p>
               )}
 
               {/* Info jika belum isi amount */}
@@ -535,12 +387,16 @@ const AddNewGoalPage = () => {
                   onChange={(e) => handleChange("start_date", e.target.value)}
                   className={`w-full bg-[#252930] border rounded-xl px-4 py-3 text-white text-sm
                     outline-none transition [color-scheme:dark]
-                    ${errors.start_date
-                      ? "border-red-500/60"
-                      : "border-white/8 focus:border-[#067A55]/50"}`}
+                    ${
+                      errors.start_date
+                        ? "border-red-500/60"
+                        : "border-white/8 focus:border-[#067A55]/50"
+                    }`}
                 />
                 {errors.start_date && (
-                  <p className="text-red-400 text-[11px]">{errors.start_date}</p>
+                  <p className="text-red-400 text-[11px]">
+                    {errors.start_date}
+                  </p>
                 )}
               </div>
 
@@ -555,12 +411,16 @@ const AddNewGoalPage = () => {
                   min={form.start_date}
                   className={`w-full bg-[#252930] border rounded-xl px-4 py-3 text-white text-sm
                     outline-none transition [color-scheme:dark]
-                    ${errors.target_date
-                      ? "border-red-500/60"
-                      : "border-white/8 focus:border-[#067A55]/50"}`}
+                    ${
+                      errors.target_date
+                        ? "border-red-500/60"
+                        : "border-white/8 focus:border-[#067A55]/50"
+                    }`}
                 />
                 {errors.target_date && (
-                  <p className="text-red-400 text-[11px]">{errors.target_date}</p>
+                  <p className="text-red-400 text-[11px]">
+                    {errors.target_date}
+                  </p>
                 )}
               </div>
             </div>
@@ -578,36 +438,52 @@ const AddNewGoalPage = () => {
                   className="w-full bg-[#252930] border border-white/8 rounded-xl pl-10 pr-4 py-3
                     text-white text-sm font-bold"
                 >
-                  {selectedPlan
-                    ? Number(selectedPlan.amount).toLocaleString("id-ID")
-                    : <span className="text-gray-600 font-normal">0</span>
-                  }
+                  {selectedPlan ? (
+                    Number(selectedPlan.amount).toLocaleString("id-ID")
+                  ) : (
+                    <span className="text-gray-600 font-normal">0</span>
+                  )}
                 </div>
               </div>
               <p className="text-gray-600 text-[11px]">
-                *Sistem akan otomatis menghitung kapan target ini tercapai berdasarkan rencana di atas.
+                *Sistem akan otomatis menghitung kapan target ini tercapai
+                berdasarkan rencana di atas.
               </p>
             </div>
 
             {/* ── Smart Prediction (muncul hanya jika plan dipilih) ── */}
             {selectedPlan && form.target_amount && (
-              <div className="flex items-start gap-2.5 bg-[#067A55]/10 border border-[#067A55]/20
-                rounded-xl px-4 py-3">
-                <Sparkles size={14} className="text-[#067A55] shrink-0 mt-0.5" />
+              <div
+                className="flex items-start gap-2.5 bg-[#067A55]/10 border border-[#067A55]/20
+                rounded-xl px-4 py-3"
+              >
+                <Sparkles
+                  size={14}
+                  className="text-[#067A55] shrink-0 mt-0.5"
+                />
                 <p className="text-[#4ade80] text-sm">
                   Tabung{" "}
                   <span className="font-black">
-                    {formatRupiah(selectedPlan.amount)} / {selectedPlan.label.toLowerCase()}
+                    {formatRupiah(selectedPlan.amount)} /{" "}
+                    {selectedPlan.label.toLowerCase()}
                   </span>{" "}
                   → target{" "}
-                  <span className="font-black">{formatRupiah(parseFloat(form.target_amount))}</span>
+                  <span className="font-black">
+                    {formatRupiah(parseFloat(form.target_amount))}
+                  </span>
                   {form.target_date && (
                     <>
-                      {" "}tercapai pada{" "}
+                      {" "}
+                      tercapai pada{" "}
                       <span className="font-black">
-                        {new Date(form.target_date).toLocaleDateString("id-ID", {
-                          day: "2-digit", month: "short", year: "numeric",
-                        })}
+                        {new Date(form.target_date).toLocaleDateString(
+                          "id-ID",
+                          {
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric",
+                          },
+                        )}
                       </span>
                     </>
                   )}
@@ -634,52 +510,6 @@ const AddNewGoalPage = () => {
                 {loading ? "Menyimpan..." : "Save Goal"}
               </button>
             </div>
-
-=======
-              </div>
-
-              {/* CALCULATED AMOUNT (READ ONLY) */}
-              <div className="mb-10">
-                <label className="block text-[10px] font-black text-gray-400 uppercase mb-2 tracking-tighter">
-                  Amount To Save Per Period
-                </label>
-                <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#121417] font-bold text-sm">
-                    Rp
-                  </span>
-                  <input
-                    type="text"
-                    readOnly
-                    value={formatRupiah(amountPerPeriod)}
-                    className="w-full bg-[#EBEEF2] text-[#121417] rounded-xl py-4 pl-10 pr-4 font-black text-lg outline-none cursor-not-allowed opacity-90"
-                    placeholder="0"
-                  />
-                </div>
-                <p className="text-xs text-gray-500 mt-2">
-                  *Sistem akan otomatis menghitung kapan target ini tercapai
-                  berdasarkan rencana di atas.
-                </p>
-              </div>
-
-              {/* ACTION BUTTONS */}
-              <div className="flex justify-between items-center">
-                <button
-                  type="button"
-                  onClick={() => navigate(-1)}
-                  className="text-gray-400 text-xs font-bold hover:text-white transition-colors cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={isSaving}
-                  className="bg-[#EBEEF2] text-[#121417] px-10 py-3.5 rounded-xl font-black text-sm hover:bg-white transition-all shadow-md cursor-pointer active:scale-95 disabled:opacity-50 flex items-center gap-2"
-                >
-                  {isSaving ? "Saving..." : "Save Goal"}
-                </button>
-              </div>
-            </form>
->>>>>>> 8425be7d872f45da42c1e6d89855a8a79b1c2d92
           </div>
         </div>
       </main>
