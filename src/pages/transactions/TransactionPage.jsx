@@ -3,6 +3,9 @@ import MainLayout from "../../layouts/MainLayout";
 import api from "../../api/axios";
 import SummaryCard from "../../components/SummaryCard";
 import TransactionTable from "../../components/TransactionTable";
+import Header from "../../components/Header";
+import { Bell, User } from "lucide-react";  
+import { Link } from "react-router-dom";
 
 export default function Transactions() {
   const [transactions, setTransactions] = useState([]);
@@ -64,14 +67,21 @@ export default function Transactions() {
   return (
     <MainLayout isLoading={isLoading}>
       {/* HEADER HALAMAN */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-        <div>
-          <h2 className="text-3xl font-bold text-[#047857]">Transactions</h2>
-          <p className="text-white-400 text-sm mt-1">
-            Kelola dan pantau semua catatan keuangan Anda.
-          </p>
-        </div>
-      </div>
+      <Header
+          title="Transactions"
+          rightSection={
+            <div className="flex items-center gap-5">
+              <Bell size={18} className="text-gray-400" />
+
+              <Link
+                to="/profile"
+                className="w-10 h-10 rounded-full bg-[#1F2937] border border-white/10 flex items-center justify-center hover:bg-[#374151] transition"
+              >
+                <User size={18} className="text-[#F4B183]" />
+              </Link>
+            </div>
+          }
+        />
 
       {/* FILTER BAR */}
       <div className="bg-white border border-[#1e2124] rounded-2xl p-4 mb-6 flex flex-wrap md:flex-nowrap gap-4 items-end w-full">
