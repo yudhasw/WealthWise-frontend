@@ -95,21 +95,6 @@ export default function Sidebar() {
           Dashboard
         </Link>
 
-        <Link
-          to="/profile"
-          className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all ${
-            isActive("/profile")
-              ? "bg-[#F3F4F6] text-[#0E7958]"
-              : "text-gray-300 hover:text-white hover:bg-gray-800/50"
-          }`}
-        >
-          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6.75a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
-            <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 20.25v-1.125A4.125 4.125 0 018.625 14.999h6.75A4.125 4.125 0 0119.5 19.125V20.25" />
-          </svg>
-          Profile
-        </Link>
-
         {/* Section: Financials */}
         <div className="pt-2">
           <button

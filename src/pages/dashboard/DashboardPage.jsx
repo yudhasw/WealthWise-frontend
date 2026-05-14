@@ -12,8 +12,9 @@ export default function Dashboard() {
     net_balance: 0,
     total_income: 0,
     total_expense: 0,
-    top_category: "Belum ada pengeluaran",
+    top_category: "Belum ada data",
   });
+
   const [chartData, setChartData] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -24,23 +25,31 @@ export default function Dashboard() {
       try {
         const response = await api.get("/dashboard");
 
-        const dashboardData = response.data.data || response.data;
+        // Mengambil objek data utama dari response axios
+        const data = response.data.data || response.data;
 
-        if (dashboardData.summary) {
-          setSummary(dashboardData.summary);
+        // 🔥 PERBAIKAN 1: Mendukung struktur flat maupun nested
+        const summaryData = data.summary || data;
 
-          if (dashboardData.summary.chart) {
-            const formattedChart = Object.keys(dashboardData.summary.chart).map(
-              (key) => ({
-                name: key,
-                value: Number(dashboardData.summary.chart[key]),
-              }),
-            );
-            setChartData(formattedChart);
-          }
+        setSummary({
+          net_balance: Number(summaryData.net_balance) || 0,
+          total_income: Number(summaryData.total_income) || 0,
+          total_expense: Number(summaryData.total_expense) || 0,
+          top_category: summaryData.top_category || "Belum ada pengeluaran",
+        });
+
+        // 🔥 PERBAIKAN 2: Mencari data chart dengan lebih aman
+        const chartRaw = summaryData.chart || data.chart;
+        if (chartRaw && typeof chartRaw === "object") {
+          const formattedChart = Object.keys(chartRaw).map((key) => ({
+            name: key,
+            value: Number(chartRaw[key]),
+          }));
+          setChartData(formattedChart);
         }
 
-        setTransactions(dashboardData.recent_transactions || []);
+        // 🔥 PERBAIKAN 3: Fallback nama key untuk transaksi
+        setTransactions(data.recent_transactions || data.transactions || []);
       } catch (err) {
         console.error("Gagal mengambil data dashboard:", err);
         setError(
@@ -69,20 +78,29 @@ export default function Dashboard() {
   return (
     <MainLayout isLoading={isLoading}>
       <Header
-          title="Dashboard"
-          rightSection={
-            <div className="flex items-center gap-5">
-              <Bell size={18} className="text-gray-400" />
+        title="Dashboard"
+        rightSection={
+          <div className="flex items-center gap-5">
+            <Bell
+              size={18}
+              className="text-gray-400 hover:text-white cursor-pointer transition-colors"
+            />
 
-              <Link
-                to="/profile"
-                className="w-10 h-10 rounded-full bg-[#1F2937] border border-white/10 flex items-center justify-center hover:bg-[#374151] transition"
-              >
-                <User size={18} className="text-[#F4B183]" />
-              </Link>
-            </div>
-          }
-        />
+            <Link
+              to="/profile"
+              className="w-10 h-10 rounded-full bg-[#1F2937] border border-white/10 flex items-center justify-center hover:bg-[#374151] transition"
+            >
+              <User size={18} className="text-[#F4B183]" />
+            </Link>
+          </div>
+        }
+      />
+
+      {error && (
+        <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-4 rounded-2xl mb-6 text-sm font-semibold">
+          {error}
+        </div>
+      )}
 
       {/* TOP CARDS SECTION */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
@@ -92,25 +110,27 @@ export default function Dashboard() {
             <p className="text-xs font-bold text-emerald-100/70 mb-2 uppercase tracking-widest">
               TOTAL NET WORTH
             </p>
-            <h3 className="text-5xl font-extrabold text-white mb-3">
+            <h3 className="text-5xl font-extrabold text-white mb-3 tracking-tight">
               {formatRupiah(summary.net_balance)}
             </h3>
-            <span className="inline-block bg-emerald-800/60 text-emerald-100 text-xs px-2.5 py-1 rounded-md font-medium mb-8">
+            <span className="inline-block bg-emerald-800/60 border border-emerald-500/20 text-emerald-100 text-xs px-3 py-1 rounded-md font-bold mb-8">
               ALL TIME
             </span>
 
             <div className="flex flex-wrap gap-8 border-b border-emerald-800/50 pb-6 mb-6">
               <div>
-                <p className="text-xs text-emerald-200/60 mb-1">Total Income</p>
-                <p className="text-lg font-bold text-white">
+                <p className="text-xs font-bold uppercase tracking-wider text-emerald-200/60 mb-1">
+                  Total Income
+                </p>
+                <p className="text-lg font-black text-white">
                   {formatRupiah(summary.total_income)}
                 </p>
               </div>
               <div>
-                <p className="text-xs text-emerald-200/60 mb-1">
+                <p className="text-xs font-bold uppercase tracking-wider text-emerald-200/60 mb-1">
                   Total Expenses
                 </p>
-                <p className="text-lg font-bold text-white">
+                <p className="text-lg font-black text-white">
                   {formatRupiah(summary.total_expense)}
                 </p>
               </div>
@@ -118,10 +138,10 @@ export default function Dashboard() {
 
             {/* Top Category */}
             <div>
-              <p className="text-xs text-emerald-200/60 mb-1">
+              <p className="text-xs font-bold uppercase tracking-wider text-emerald-200/60 mb-1">
                 Top Category Expense
               </p>
-              <p className="text-sm font-semibold text-orange-300">
+              <p className="text-sm font-bold text-orange-400 uppercase tracking-wide">
                 {summary.top_category}
               </p>
             </div>
@@ -134,12 +154,12 @@ export default function Dashboard() {
                 <PieChart>
                   <Pie
                     data={chartData}
-                    innerRadius={70} // Membuat lubang di tengah (Donut Chart)
+                    innerRadius={70}
                     outerRadius={90}
-                    paddingAngle={8} // Jarak antar potongan lebih lebar
+                    paddingAngle={8}
                     dataKey="value"
                     stroke="none"
-                    cornerRadius={6} // Membuat sudut potongan melengkung (modern)
+                    cornerRadius={6}
                     animationBegin={0}
                     animationDuration={1500}
                   >
@@ -152,17 +172,20 @@ export default function Dashboard() {
                     ))}
                   </Pie>
 
-                  {/* Tooltip yang lebih elegan */}
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: "rgba(15, 23, 42, 0.9)", // Warna Slate-900 dengan transparansi
-                      border: "1px solid rgba(16, 185, 129, 0.2)", // Border Emerald halus
+                      backgroundColor: "rgba(15, 23, 42, 0.95)",
+                      border: "1px solid rgba(16, 185, 129, 0.3)",
                       borderRadius: "12px",
                       color: "#fff",
-                      padding: "10px",
-                      boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
+                      padding: "10px 14px",
+                      boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.2)",
                     }}
-                    itemStyle={{ color: "#fff", fontSize: "12px" }}
+                    itemStyle={{
+                      color: "#fff",
+                      fontSize: "13px",
+                      fontWeight: "bold",
+                    }}
                     formatter={(value, name) => [formatRupiah(value), name]}
                   />
                 </PieChart>
@@ -170,7 +193,7 @@ export default function Dashboard() {
             ) : (
               /* Placeholder jika data kosong */
               <div className="w-48 h-48 rounded-full border-2 border-dashed border-emerald-500/20 flex flex-col items-center justify-center bg-emerald-500/5">
-                <span className="text-emerald-500/40 text-xs font-medium">
+                <span className="text-emerald-500/40 text-xs font-bold tracking-widest uppercase">
                   No Data Yet
                 </span>
               </div>
@@ -181,10 +204,10 @@ export default function Dashboard() {
               {chartData.slice(0, 3).map((entry, index) => (
                 <div key={index} className="flex items-center gap-1.5">
                   <div
-                    className="w-2 h-2 rounded-full"
+                    className="w-2.5 h-2.5 rounded-full"
                     style={{ backgroundColor: COLORS[index % COLORS.length] }}
                   />
-                  <span className="text-[10px] text-emerald-100/60 uppercase tracking-tighter">
+                  <span className="text-[10px] font-bold text-emerald-100/60 uppercase tracking-tighter">
                     {entry.name}
                   </span>
                 </div>
@@ -195,16 +218,18 @@ export default function Dashboard() {
 
         {/* Quick Actions */}
         <div className="lg:col-span-1 flex flex-col">
-          <h3 className="text-emerald-500 font-semibold mb-4">Quick Actions</h3>
+          <h3 className="text-emerald-500 font-bold uppercase tracking-widest text-xs mb-4 px-1">
+            Quick Actions
+          </h3>
           <div className="flex flex-col gap-4 h-full">
-            <button className="flex-1 bg-[#333538] rounded-2xl p-6 flex flex-col items-center justify-center hover:bg-[#3f4144] transition-all shadow-md">
-              <div className="bg-gray-500/20 p-4 rounded-full mb-3 border border-gray-500/30">
+            <button className="flex-1 bg-[#161a1d] border border-[#262b2f] rounded-3xl p-6 flex flex-col items-center justify-center hover:bg-[#1e2124] hover:border-emerald-500/30 transition-all shadow-md group">
+              <div className="bg-[#1e2124] group-hover:bg-emerald-500/10 p-4 rounded-full mb-3 border border-[#262b2f] group-hover:border-emerald-500/30 transition-colors">
                 <svg
                   fill="none"
                   viewBox="0 0 24 24"
                   strokeWidth={1.5}
                   stroke="currentColor"
-                  className="w-8 h-8 text-gray-300"
+                  className="w-7 h-7 text-gray-400 group-hover:text-emerald-400 transition-colors"
                 >
                   <path
                     strokeLinecap="round"
@@ -213,20 +238,22 @@ export default function Dashboard() {
                   />
                 </svg>
               </div>
-              <span className="text-gray-200 font-medium text-sm text-center">
-                Scan
-                <br />
-                Receipt
+              <span className="text-gray-300 font-bold text-sm text-center group-hover:text-white transition-colors">
+                Scan Receipt
               </span>
             </button>
-            <Link to="/smart-planning" className="flex-1 bg-[#102A20] border border-emerald-500/20 rounded-2xl p-6 flex flex-col items-center justify-center hover:bg-[#15382a] transition-all shadow-md">
-              <div className="bg-white p-3 rounded-full mb-3 shadow-sm">
+
+            <Link
+              to="/smart-planning"
+              className="flex-1 bg-gradient-to-br from-[#0d2718] to-[#161a1d] border border-emerald-500/20 rounded-3xl p-6 flex flex-col items-center justify-center hover:border-emerald-500/50 transition-all shadow-md group"
+            >
+              <div className="bg-emerald-500 p-3 rounded-full mb-3 shadow-lg shadow-emerald-500/20 group-hover:scale-110 transition-transform">
                 <svg
                   fill="none"
                   viewBox="0 0 24 24"
-                  strokeWidth={2}
+                  strokeWidth={2.5}
                   stroke="currentColor"
-                  className="w-6 h-6 text-emerald-600"
+                  className="w-6 h-6 text-white"
                 >
                   <path
                     strokeLinecap="round"
@@ -235,7 +262,7 @@ export default function Dashboard() {
                   />
                 </svg>
               </div>
-              <span className="text-emerald-500 font-medium text-sm">
+              <span className="text-emerald-400 font-bold text-sm group-hover:text-emerald-300 transition-colors">
                 Open Smart Planning
               </span>
             </Link>
@@ -244,6 +271,7 @@ export default function Dashboard() {
       </div>
 
       {/* RECENT TRANSACTIONS TABLE */}
+      {/* isRecent={true} memastikan tombol edit/delete disembunyikan di tabel ini */}
       <TransactionTable
         transactions={transactions?.slice(0, 5) || []}
         isLoading={isLoading}
