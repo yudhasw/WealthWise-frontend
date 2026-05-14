@@ -5,6 +5,7 @@ import DashboardPage from "./pages/dashboard/DashboardPage";
 import TransactionsPage from "./pages/transactions/TransactionPage";
 import AddTransactionsPage from "./pages/transactions/AddTransactionPage";
 import ProfilePage from "./pages/profile/ProfilePage";
+import StatisticsPage from "./pages/statistics/StatisticsPage";
 import SmartPlanning from "./pages/smartplanning/Smartplanning";
 import AddNewGoalPage from "./pages/smartplanning/AddNewGoalPage";
 import EditGoalPage from "./pages/smartplanning/EditGoalPage";
@@ -21,6 +22,7 @@ function App() {
         <Route path="/transactions" element={<TransactionsPage />} />
         <Route path="/transactions/add" element={<AddTransactionsPage />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/statistics" element={<StatisticsPage />} />
         <Route path="/smart-planning" element={<SmartPlanning />} />
         <Route path="/smart-planning/add-goal" element={<AddNewGoalPage />} />
         <Route path="/smart-planning/edit/:id"element={<EditGoalPage />}/>
