@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; // 1. Import useNavigate
 import MainLayout from "../../layouts/MainLayout";
 import api from "../../api/axios";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import TransactionTable from "../../components/TransactionTable";
 
 export default function Dashboard() {
+  const navigate = useNavigate(); // 2. Inisialisasi navigate
+
   const [summary, setSummary] = useState({
     net_balance: 0,
     total_income: 0,
@@ -69,7 +72,12 @@ export default function Dashboard() {
       <header className="flex justify-between items-center mb-8">
         <h2 className="text-2xl font-semibold text-emerald-500">Overview</h2>
         <div className="flex items-center gap-5">
-          <button className="text-gray-400 hover:text-white transition-colors">
+          
+          {/* 3. Tambahkan onClick pada tombol Notifikasi / Lonceng ini */}
+          <button 
+            onClick={() => navigate('/notifications')}
+            className="text-gray-400 hover:text-white transition-colors"
+          >
             <svg
               fill="none"
               viewBox="0 0 24 24"
@@ -84,6 +92,7 @@ export default function Dashboard() {
               />
             </svg>
           </button>
+          
           <button className="p-2 bg-[#2A2A2A] rounded-full text-gray-400 hover:text-white transition-colors">
             <svg
               fill="none"
@@ -161,12 +170,12 @@ export default function Dashboard() {
                 <PieChart>
                   <Pie
                     data={chartData}
-                    innerRadius={70} // Membuat lubang di tengah (Donut Chart)
+                    innerRadius={70}
                     outerRadius={90}
-                    paddingAngle={8} // Jarak antar potongan lebih lebar
+                    paddingAngle={8}
                     dataKey="value"
                     stroke="none"
-                    cornerRadius={6} // Membuat sudut potongan melengkung (modern)
+                    cornerRadius={6}
                     animationBegin={0}
                     animationDuration={1500}
                   >
@@ -179,11 +188,10 @@ export default function Dashboard() {
                     ))}
                   </Pie>
 
-                  {/* Tooltip yang lebih elegan */}
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: "rgba(15, 23, 42, 0.9)", // Warna Slate-900 dengan transparansi
-                      border: "1px solid rgba(16, 185, 129, 0.2)", // Border Emerald halus
+                      backgroundColor: "rgba(15, 23, 42, 0.9)",
+                      border: "1px solid rgba(16, 185, 129, 0.2)",
                       borderRadius: "12px",
                       color: "#fff",
                       padding: "10px",
