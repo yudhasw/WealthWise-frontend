@@ -14,7 +14,6 @@ import { useNavigate, Link } from "react-router-dom";
 import MainLayout from "../../layouts/MainLayout";
 import api from "../../api/axios";
 import Header from "../../components/Header";
-import { Bell } from "lucide-react";
 
 // ── Stats Card ────────────────────────────────────────────────────
 function StatsCard({ label, value, sub, valueColor, bar, barColor, barPct }) {
