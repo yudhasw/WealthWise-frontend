@@ -6,12 +6,15 @@ import TransactionsPage from "./pages/transactions/TransactionPage";
 import AddTransactionsPage from "./pages/transactions/AddTransactionPage";
 import EditTransaction from "./pages/transactions/EditTranscation";
 import ProfilePage from "./pages/profile/ProfilePage";
+import StatisticsPage from "./pages/statistics/StatisticsPage";
+import SmartPlanning from "./pages/smartplanning/Smartplanning";
+import AddNewGoalPage from "./pages/smartplanning/AddNewGoalPage";
+import EditGoalPage from "./pages/smartplanning/EditGoalPage";
+import ViewAllGoals from "./pages/smartplanning/ViewAllGoals";
 import AddCategoryPage from "./pages/categories/AddCategoryPage";
 import EditCategoryPage from "./pages/categories/EditCategoryPage";
 import CategoriesPage from "./pages/categories/CategoriesPage";
 import EditProfilePage from "./pages/profile/EditProfilePage";
-import SmartPlanning from "./pages/smarplanning/Smartplanning";
-import AddNewGoalPage from "./pages/smarplanning/AddNewGoalPage";
 import FinancialHealth from "./pages/financial-health/FinancialHealthPage";
 
 function App() {
@@ -26,12 +29,15 @@ function App() {
         <Route path="/transactions/add" element={<AddTransactionsPage />} />
         <Route path="/transactions/edit/:id" element={<EditTransaction />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/statistics" element={<StatisticsPage />} />
         <Route path="/categories/add" element={<AddCategoryPage />} />
         <Route path="/categories/edit/:id" element={<EditCategoryPage />} />
         <Route path="/categories" element={<CategoriesPage />} />
         <Route path="/profile/edit" element={<EditProfilePage />} />
         <Route path="/smart-planning" element={<SmartPlanning />} />
         <Route path="/smart-planning/add-goal" element={<AddNewGoalPage />} />
+        <Route path="/smart-planning/edit/:id" element={<EditGoalPage />} />
+        <Route path="/smart-planning/active-goals" element={<ViewAllGoals />} />
         <Route path="/financial-health" element={<FinancialHealth />} />
       </Routes>
     </BrowserRouter>
