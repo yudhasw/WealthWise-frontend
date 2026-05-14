@@ -1,20 +1,18 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import MainLayout from "../../layouts/MainLayout";
 import api from "../../api/axios";
 
 export default function AddTransaction() {
   const navigate = useNavigate();
-  const location = useLocation();
-  const prefilled = location.state?.prefilled;
 
   const [form, setForm] = useState({
-    description:      prefilled?.description      ?? "",
-    transaction_date: prefilled?.transaction_date ?? "",
-    type:             prefilled?.type             ?? "EXPENSE",
-    amount:           prefilled?.amount != null   ? String(prefilled.amount) : "",
-    category_id:      "",
-    account_id:       "",
+    description: "",
+    transaction_date: "",
+    type: "EXPENSE",
+    amount: "",
+    category_id: "",
+    account_id: "",
   });
 
   const [accounts, setAccounts] = useState([]);
@@ -60,6 +58,15 @@ export default function AddTransaction() {
       }
       return newForm;
     });
+  };
+
+  // Handler khusus untuk tombol Type agar mereset kategori
+  const handleTypeChange = (newType) => {
+    setForm((prev) => ({
+      ...prev,
+      type: newType,
+      category_id: "", // Reset kategori saat pindah tipe
+    }));
   };
 
   const handleSubmit = async () => {
@@ -138,23 +145,11 @@ export default function AddTransaction() {
           Adjust the details of your transaction to maintain an accurate ledger.
         </p>
 
-        {/* Scan Receipt banner */}
-        {prefilled && (
-          <div className="flex items-center gap-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl px-4 py-3 mb-6">
-            <svg fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 text-emerald-400 shrink-0">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M3 8V6a2 2 0 012-2h2M3 16v2a2 2 0 002 2h2m10-14h2a2 2 0 012 2v2m-2 10h-2a2 2 0 01-2-2v-2M8 12h8m-4-4v8" />
-            </svg>
-            <p className="text-emerald-300 text-sm">
-              Data diisi otomatis dari hasil scan struk. Periksa dan sesuaikan jika perlu.
-            </p>
-          </div>
-        )}
-
         {/* FORM CARD */}
         <div className="bg-[#2C2F32] border border-[#262b2f] rounded-2xl p-8">
           {/* Transaction Name */}
           <div className="mb-5">
-            <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">
+            <label className="block text-[10px] font-bold text-gray-300 uppercase tracking-widest mb-2">
               Transaction Name
             </label>
             <input
@@ -162,16 +157,16 @@ export default function AddTransaction() {
               name="description"
               value={form.description}
               onChange={handleChange}
-              placeholder="Ex: Apple Store MacBook Pro"
-              className="w-full bg-white border border-[#262b2f] text-black placeholder-gray-600 px-4 py-3.5 rounded-xl text-sm focus:outline-none focus:border-emerald-500 transition-colors"
+              placeholder="Apple Store MacBook Pro"
+              className="w-full bg-[#f4f5f6] border border-[#262b2f] text-black placeholder-gray-400 px-4 py-3.5 rounded-xl text-sm focus:outline-none focus:border-emerald-500 transition-colors font-medium"
               required
             />
           </div>
 
-          {/* Date & Type */}
+          {/* Date & Account */}
           <div className="grid grid-cols-2 gap-4 mb-5">
             <div>
-              <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">
+              <label className="block text-[10px] font-bold text-gray-300 uppercase tracking-widest mb-2">
                 Date
               </label>
               <div className="relative">
@@ -180,29 +175,37 @@ export default function AddTransaction() {
                   name="transaction_date"
                   value={form.transaction_date}
                   onChange={handleChange}
-                  className="w-full bg-white border border-[#262b2f] text-black px-4 py-3.5 rounded-xl text-sm focus:outline-none focus:border-emerald-500 transition-colors"
+                  className="w-full bg-[#f4f5f6] border border-[#262b2f] text-black px-4 py-3.5 rounded-xl text-sm focus:outline-none focus:border-emerald-500 transition-colors font-medium text-gray-600"
                   required
                 />
               </div>
             </div>
 
-            {/* Type */}
+            {/* Account (Dropdown) */}
             <div>
-              <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">
-                Type
+              <label className="block text-[10px] font-bold text-gray-300 uppercase tracking-widest mb-2">
+                Account
               </label>
               <div className="relative">
-                <select
-                  name="type"
-                  value={form.type}
-                  onChange={handleChange}
-                  className="w-full appearance-none bg-white border border-[#262b2f] text-black px-4 py-3.5 rounded-xl text-sm focus:outline-none focus:border-emerald-500 transition-colors cursor-pointer"
-                >
-                  <option value="EXPENSE">Expense</option>
-                  <option value="INCOME">Income</option>
-                  <option value="TRANSFER">Transfer</option>
-                </select>
-                <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-600 pointer-events-none">
+                {isLoadingData ? (
+                  <div className="w-full bg-[#f4f5f6] border border-[#262b2f] text-gray-400 px-4 py-3.5 rounded-xl text-sm animate-pulse">
+                    Loading accounts...
+                  </div>
+                ) : (
+                  <select
+                    name="account_id"
+                    value={form.account_id}
+                    onChange={handleChange}
+                    className="w-full appearance-none bg-[#f4f5f6] border border-[#262b2f] text-black px-4 py-3.5 rounded-xl text-sm focus:outline-none focus:border-emerald-500 transition-colors cursor-pointer font-medium text-gray-500"
+                  >
+                    {accounts.map((acc) => (
+                      <option key={acc.id} value={acc.id}>
+                        {acc.account_name}
+                      </option>
+                    ))}
+                  </select>
+                )}
+                <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
                   <svg
                     className="w-4 h-4"
                     fill="none"
@@ -222,13 +225,13 @@ export default function AddTransaction() {
           </div>
 
           {/* Amount & Category */}
-          <div className="grid grid-cols-2 gap-4 mb-5">
+          <div className="grid grid-cols-2 gap-4 mb-6">
             <div>
-              <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">
+              <label className="block text-[10px] font-bold text-gray-300 uppercase tracking-widest mb-2">
                 Amount
               </label>
               <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-600 pointer-events-none">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-bold text-gray-400 pointer-events-none">
                   IDR
                 </span>
                 <input
@@ -237,18 +240,18 @@ export default function AddTransaction() {
                   value={form.amount}
                   onChange={handleChange}
                   placeholder="24.999.000"
-                  className="w-full bg-white border border-[#262b2f] text-black placeholder-gray-600 pl-12 pr-4 py-3.5 rounded-xl text-sm focus:outline-none focus:border-emerald-500 transition-colors"
+                  className="w-full bg-[#f4f5f6] border border-[#262b2f] text-black placeholder-gray-400 pl-12 pr-4 py-3.5 rounded-xl text-sm focus:outline-none focus:border-emerald-500 transition-colors font-medium text-gray-600"
                 />
               </div>
-              <p className="text-xs text-gray-600 mt-1.5">
+              <p className="text-[10px] text-gray-500 mt-2 italic">
                 Enter amount without currency symbols.
               </p>
             </div>
 
-            {/* 4. TAMPILKAN KATEGORI HANYA JIKA BUKAN TRANSFER */}
+            {/* Category */}
             {form.type !== "TRANSFER" ? (
               <div>
-                <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">
+                <label className="block text-[10px] font-bold text-gray-300 uppercase tracking-widest mb-2">
                   Category
                 </label>
                 <div className="relative">
@@ -256,18 +259,16 @@ export default function AddTransaction() {
                     name="category_id"
                     value={form.category_id}
                     onChange={handleChange}
-                    className="w-full appearance-none bg-white border border-[#262b2f] text-black px-4 py-3.5 rounded-xl text-sm focus:outline-none focus:border-emerald-500 transition-colors cursor-pointer"
+                    className="w-full appearance-none bg-[#f4f5f6] border border-[#262b2f] text-black px-4 py-3.5 rounded-xl text-sm focus:outline-none focus:border-emerald-500 transition-colors cursor-pointer font-medium text-gray-500"
                   >
-                    <option value="">
-                      -- Select {form.type.toLowerCase()} category --
-                    </option>
+                    <option value="">Electronics</option>
                     {filteredCategories.map((cat) => (
                       <option key={cat.id} value={cat.id}>
                         {cat.category_name}
                       </option>
                     ))}
                   </select>
-                  <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-600 pointer-events-none">
+                  <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
                     <svg
                       className="w-4 h-4"
                       fill="none"
@@ -285,9 +286,8 @@ export default function AddTransaction() {
                 </div>
               </div>
             ) : (
-              // Tampilan placeholder untuk TRANSFER
               <div className="opacity-50">
-                <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">
+                <label className="block text-[10px] font-bold text-gray-300 uppercase tracking-widest mb-2">
                   Category
                 </label>
                 <div className="w-full bg-gray-200 border border-[#262b2f] text-gray-500 px-4 py-3.5 rounded-xl text-sm flex items-center cursor-not-allowed">
@@ -297,38 +297,35 @@ export default function AddTransaction() {
             )}
           </div>
 
-          {/* Account Toggle Dinamis */}
+          {/* TYPE TOGGLE (Block Buttons) */}
           <div className="mb-6">
-            <label className="block text-[10px] font-bold text-[#C4C6D0] uppercase tracking-widest mb-2">
-              Account / Wallet
+            <label className="block text-[10px] font-bold text-gray-300 uppercase tracking-widest mb-2">
+              Type
             </label>
-
-            {isLoadingData ? (
-              <div className="text-gray-500 text-xs animate-pulse">
-                Loading accounts...
-              </div>
-            ) : (
-              <div className="grid grid-cols-3 gap-2.5">
-                {accounts.map((acc) => (
-                  <button
-                    key={acc.id}
-                    type="button"
-                    onClick={() => setForm({ ...form, account_id: acc.id })}
-                    className={`py-3.5 rounded-xl text-sm font-bold border transition-all ${
-                      form.account_id === acc.id
-                        ? "bg-[#047857] text-white border-[#047857]"
-                        : "bg-[#F2F4F6] border-[#262b2f] text-black hover:border-emerald-500/30"
-                    }`}
-                  >
-                    {acc.account_name}
-                  </button>
-                ))}
-              </div>
-            )}
+            <div className="grid grid-cols-3 gap-3">
+              {["INCOME", "EXPENSE", "TRANSFER"].map((t) => (
+                <button
+                  key={t}
+                  type="button"
+                  onClick={() => handleTypeChange(t)}
+                  className={`py-3.5 rounded-xl text-sm font-bold border transition-all ${
+                    form.type === t
+                      ? "bg-[#047857] text-white border-[#047857]"
+                      : "bg-[#f4f5f6] border-transparent text-[#2C2F32] hover:border-emerald-500/30"
+                  }`}
+                >
+                  {t === "INCOME"
+                    ? "Income"
+                    : t === "EXPENSE"
+                      ? "Expense"
+                      : "Transfer"}
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Divider */}
-          <div className="h-px bg-[#1e2124] mb-6" />
+          <div className="h-px bg-[#3E4246] mb-6" />
 
           {/* Error Message */}
           {error && (
@@ -342,7 +339,7 @@ export default function AddTransaction() {
             <button
               type="button"
               onClick={() => navigate("/transactions")}
-              className="text-gray-400 hover:text-white text-sm font-semibold px-5 py-3.5 rounded-xl transition-colors"
+              className="text-white hover:text-gray-300 text-sm font-bold px-2 py-3.5 rounded-xl transition-colors"
             >
               Cancel
             </button>
@@ -350,7 +347,7 @@ export default function AddTransaction() {
               type="button"
               onClick={handleSubmit}
               disabled={isLoading || !isFormValid(form)}
-              className="bg-[#047857] hover:bg-[#047857] disabled:opacity-60 text-white px-8 py-3.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2"
+              className="bg-[#047857] hover:bg-[#036549] disabled:opacity-60 text-white px-8 py-3.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2"
             >
               {isLoading ? (
                 <>
@@ -358,7 +355,7 @@ export default function AddTransaction() {
                   Saving...
                 </>
               ) : (
-                "Save Transaction"
+                "Save Changes"
               )}
             </button>
           </div>

@@ -1,6 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import MainLayout from "../../layouts/MainLayout";
 import api from "../../api/axios";
+import Header from "../../components/Header";
+import { Bell, User } from "lucide-react";
+import { Link } from "react-router-dom";
 
 // ── Gauge Chart ────────────────────────────────────────────────────
 function GaugeChart({ score }) {
@@ -242,55 +245,24 @@ export default function FinancialHealth() {
   return (
     <MainLayout isLoading={isLoading}>
       {/* HEADER */}
-      <header className="flex justify-between items-center mb-8">
-        <div>
-          <h2 className="text-2xl font-bold text-white">Finance Health</h2>
-          <p className="text-gray-500 text-xs mt-0.5">
-            Pantau kondisi keuangan Anda secara real-time
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <button className="w-9 h-9 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/5 rounded-xl transition-colors">
-            <svg
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={2}
-              stroke="currentColor"
-              className="w-5 h-5"
+      <Header
+        title="Financial Health"
+        rightSection={
+          <div className="flex items-center gap-5">
+            <Bell
+              size={18}
+              className="text-gray-400 hover:text-white cursor-pointer transition-colors"
+            />
+
+            <Link
+              to="/profile"
+              className="w-10 h-10 rounded-full bg-[#1F2937] border border-white/10 flex items-center justify-center hover:bg-[#374151] transition"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-              />
-            </svg>
-          </button>
-          <button className="w-9 h-9 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/5 rounded-xl transition-colors">
-            <svg
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={2}
-              stroke="currentColor"
-              className="w-5 h-5"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-          </button>
-          <div className="w-9 h-9 rounded-full bg-slate-700 flex items-center justify-center overflow-hidden border-2 border-gray-700 hover:border-emerald-500/50 transition-colors cursor-pointer">
-            <svg
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              className="w-5 h-5 text-blue-300 mt-1.5"
-            >
-              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-            </svg>
+              <User size={18} className="text-[#F4B183]" />
+            </Link>
           </div>
-        </div>
-      </header>
+        }
+      />
 
       {/* WEALTHWISE INDEX */}
       <div className="relative bg-[#1a1d21] rounded-3xl p-8 mb-6 border border-white/5 flex flex-col items-center overflow-hidden">

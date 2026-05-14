@@ -4,6 +4,7 @@ import RegisterPage from "./pages/auth/RegisterPage";
 import DashboardPage from "./pages/dashboard/DashboardPage";
 import TransactionsPage from "./pages/transactions/TransactionPage";
 import AddTransactionsPage from "./pages/transactions/AddTransactionPage";
+import EditTransaction from "./pages/transactions/EditTranscation";
 import ProfilePage from "./pages/profile/ProfilePage";
 import AddCategoryPage from "./pages/categories/AddCategoryPage";
 import EditCategoryPage from "./pages/categories/EditCategoryPage";
@@ -23,6 +24,7 @@ function App() {
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/transactions" element={<TransactionsPage />} />
         <Route path="/transactions/add" element={<AddTransactionsPage />} />
+        <Route path="/transactions/edit/:id" element={<EditTransaction />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/categories/add" element={<AddCategoryPage />} />
         <Route path="/categories/edit/:id" element={<EditCategoryPage />} />

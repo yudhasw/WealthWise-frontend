@@ -1,11 +1,32 @@
-import React from "react";
+import React, { useState } from "react";
 
 export default function TransactionTable({
-  transactions,
+  transactions = [],
   isLoading,
   error,
   isRecent = false,
+  onEdit,
+  onDelete,
 }) {
+  // --- STATE UNTUK PAGINATION ---
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  // --- LOGIKA PEMOTONGAN DATA (SLICE) ---
+  const totalItems = transactions.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+  // Menentukan index awal dan akhir data untuk halaman saat ini
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+
+  // Jika di mode "isRecent", kita paksa hanya tampil 10 teratas dari halaman 1
+  // Jika tidak, tampilkan data sesuai halaman saat ini
+  const currentTransactions = isRecent
+    ? transactions.slice(0, itemsPerPage)
+    : transactions.slice(startIndex, endIndex);
+
+  // --- FUNGSI FORMAT RUPIAH ---
   const formatRupiah = (amount) => {
     return new Intl.NumberFormat("id-ID", {
       style: "currency",
@@ -20,29 +41,24 @@ export default function TransactionTable({
 
   const colSpanCount = columns.length;
 
-  return (
-    // Mengubah bg-white menjadi warna gelap agar sesuai dengan screenshot
-    <div className="bg-[#0e1012] border border-[#1e2124] rounded-2xl overflow-hidden shadow-lg">
-      {/* --- BAGIAN HEADER BARU (Hanya Muncul di Mode Recent) --- */}
-      {isRecent && (
-        <div className="flex justify-between items-center px-5 py-5 border-b border-[#1e2124]">
-          <h3 className="text-lg font-bold text-white tracking-wide">
-            Recent Transactions
-          </h3>
-          <a
-            href="/transactions"
-            className="text-emerald-500 hover:text-emerald-400 font-semibold text-sm flex items-center gap-1 transition-colors"
-          >
-            View All <span aria-hidden="true">&rarr;</span>
-          </a>
-        </div>
-      )}
-      {/* -------------------------------------------------------- */}
+  // --- HANDLER PAGINATION ---
+  const handlePrevPage = () => {
+    setCurrentPage((prev) => Math.max(prev - 1, 1));
+  };
 
+  const handleNextPage = () => {
+    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+  };
+
+  const handleGoToPage = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  return (
+    <div className="bg-[#0e1012] border border-[#1e2124] rounded-2xl overflow-hidden shadow-lg">
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
-            {/* Saya asumsikan Anda juga ingin header tabelnya berwarna gelap */}
             <tr className="bg-[#131619] border-b border-[#1e2124]">
               {columns.map((col) => (
                 <th
@@ -81,7 +97,7 @@ export default function TransactionTable({
                   {error}
                 </td>
               </tr>
-            ) : transactions.length === 0 ? (
+            ) : currentTransactions.length === 0 ? (
               <tr>
                 <td
                   colSpan={colSpanCount}
@@ -91,7 +107,8 @@ export default function TransactionTable({
                 </td>
               </tr>
             ) : (
-              transactions.map((tx) => (
+              // MAPPING DARI currentTransactions, BUKAN transactions LAGI
+              currentTransactions.map((tx) => (
                 <tr
                   key={tx.id}
                   className="hover:bg-[#1a1d20] transition-colors group text-sm"
@@ -149,11 +166,14 @@ export default function TransactionTable({
                     {tx.account?.name || "N/A"}
                   </td>
 
-                  {/* Actions - HANYA DITAMPILKAN JIKA BUKAN RECENT TRANSACTION */}
+                  {/* Actions */}
                   {!isRecent && (
                     <td className="py-4 px-5">
                       <div className="flex items-center justify-center gap-2">
-                        <button className="w-8 h-8 rounded-lg border border-[#262b2f] bg-[#0e1012] flex items-center justify-center text-gray-600 hover:border-emerald-500/30 hover:bg-[#0d2718] hover:text-emerald-400 transition-all">
+                        <button
+                          onClick={() => onEdit(tx.id)}
+                          className="w-8 h-8 rounded-lg border border-[#262b2f] bg-[#0e1012] flex items-center justify-center text-gray-600 hover:border-emerald-500/30 hover:bg-[#0d2718] hover:text-emerald-400 transition-all"
+                        >
                           <svg
                             className="w-4 h-4"
                             fill="none"
@@ -168,7 +188,10 @@ export default function TransactionTable({
                             />
                           </svg>
                         </button>
-                        <button className="w-8 h-8 rounded-lg border border-[#262b2f] bg-[#0e1012] flex items-center justify-center text-gray-600 hover:border-red-500/30 hover:bg-[#2a1010] hover:text-red-400 transition-all">
+                        <button
+                          onClick={() => onDelete(tx.id)}
+                          className="w-8 h-8 rounded-lg border border-[#262b2f] bg-[#0e1012] flex items-center justify-center text-gray-600 hover:border-red-500/30 hover:bg-[#2a1010] hover:text-red-400 transition-all"
+                        >
                           <svg
                             className="w-4 h-4"
                             fill="none"
@@ -193,27 +216,50 @@ export default function TransactionTable({
         </table>
       </div>
 
-      {/* PAGINATION FOOTER - HANYA DITAMPILKAN JIKA BUKAN RECENT TRANSACTION */}
-      {!isRecent && (
+      {/* PAGINATION FOOTER */}
+      {!isRecent && totalItems > 0 && (
         <div className="bg-[#131619] px-5 py-3.5 flex justify-between items-center border-t border-[#1e2124]">
           <p className="text-xs text-gray-600">
             Showing{" "}
+            <span className="font-bold text-gray-400">{startIndex + 1}</span> to{" "}
             <span className="font-bold text-gray-400">
-              {transactions.length}
+              {Math.min(endIndex, totalItems)}
             </span>{" "}
+            of <span className="font-bold text-gray-400">{totalItems}</span>{" "}
             entries
           </p>
+
           <div className="flex gap-1.5">
-            <button className="w-8 h-8 rounded-lg border border-[#262b2f] bg-[#161a1d] text-gray-500 text-sm flex items-center justify-center hover:border-emerald-500/30 hover:text-emerald-400 hover:bg-[#0d2718] transition-all">
+            {/* Tombol Previous */}
+            <button
+              onClick={handlePrevPage}
+              disabled={currentPage === 1}
+              className="w-8 h-8 rounded-lg border border-[#262b2f] bg-[#161a1d] text-gray-500 text-sm flex items-center justify-center hover:border-emerald-500/30 hover:text-emerald-400 hover:bg-[#0d2718] disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+            >
               ‹
             </button>
-            <button className="w-8 h-8 rounded-lg bg-emerald-500 text-white text-xs font-bold flex items-center justify-center">
-              1
-            </button>
-            <button className="w-8 h-8 rounded-lg border border-[#262b2f] bg-[#161a1d] text-gray-500 text-xs font-semibold flex items-center justify-center hover:border-emerald-500/30 hover:text-emerald-400 hover:bg-[#0d2718] transition-all">
-              2
-            </button>
-            <button className="w-8 h-8 rounded-lg border border-[#262b2f] bg-[#161a1d] text-gray-500 text-sm flex items-center justify-center hover:border-emerald-500/30 hover:text-emerald-400 hover:bg-[#0d2718] transition-all">
+
+            {/* Loop Nomor Halaman Dinamis */}
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <button
+                key={page}
+                onClick={() => handleGoToPage(page)}
+                className={`w-8 h-8 rounded-lg text-xs font-semibold flex items-center justify-center transition-all ${
+                  currentPage === page
+                    ? "bg-emerald-500 text-white" // Warna aktif
+                    : "border border-[#262b2f] bg-[#161a1d] text-gray-500 hover:border-emerald-500/30 hover:text-emerald-400 hover:bg-[#0d2718]" // Warna inaktif
+                }`}
+              >
+                {page}
+              </button>
+            ))}
+
+            {/* Tombol Next */}
+            <button
+              onClick={handleNextPage}
+              disabled={currentPage === totalPages}
+              className="w-8 h-8 rounded-lg border border-[#262b2f] bg-[#161a1d] text-gray-500 text-sm flex items-center justify-center hover:border-emerald-500/30 hover:text-emerald-400 hover:bg-[#0d2718] disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+            >
               ›
             </button>
           </div>
