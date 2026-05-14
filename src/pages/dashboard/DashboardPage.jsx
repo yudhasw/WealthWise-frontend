@@ -219,6 +219,8 @@ function ScanReceiptModal({ onClose }) {
 }
 
 export default function Dashboard() {
+  const navigate = useNavigate(); // 2. Inisialisasi navigate
+
   const [summary, setSummary] = useState({
     net_balance: 0,
     total_income: 0,
@@ -354,10 +356,13 @@ export default function Dashboard() {
                   <Pie
                     data={chartData}
                     innerRadius={70}
+                    innerRadius={70}
                     outerRadius={90}
+                    paddingAngle={8}
                     paddingAngle={8}
                     dataKey="value"
                     stroke="none"
+                    cornerRadius={6}
                     cornerRadius={6}
                     animationBegin={0}
                     animationDuration={1500}
@@ -372,6 +377,8 @@ export default function Dashboard() {
                   </Pie>
                   <Tooltip
                     contentStyle={{
+                      backgroundColor: "rgba(15, 23, 42, 0.9)",
+                      border: "1px solid rgba(16, 185, 129, 0.2)",
                       backgroundColor: "rgba(15, 23, 42, 0.9)",
                       border: "1px solid rgba(16, 185, 129, 0.2)",
                       borderRadius: "12px",

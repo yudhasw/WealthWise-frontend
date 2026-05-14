@@ -16,6 +16,11 @@ import EditCategoryPage from "./pages/categories/EditCategoryPage";
 import CategoriesPage from "./pages/categories/CategoriesPage";
 import EditProfilePage from "./pages/profile/EditProfilePage";
 import FinancialHealth from "./pages/financial-health/FinancialHealthPage";
+import AccountPage from "./pages/account/AccountPage";
+import AddAccountPage from "./pages/account/AddAccountPage";
+import EditAccountPage from "./pages/account/EditAccountPage";
+import NotificationPage from "./pages/notification/NotificationPage";
+import LandingPage from "./pages/landingpage/LandingPage";
 
 function App() {
   return (
@@ -39,6 +44,14 @@ function App() {
         <Route path="/smart-planning/edit/:id" element={<EditGoalPage />} />
         <Route path="/smart-planning/active-goals" element={<ViewAllGoals />} />
         <Route path="/financial-health" element={<FinancialHealth />} />
+
+        <Route path="/accounts" element={<AccountPage />} />
+        <Route path="/accounts/add" element={<AddAccountPage />} />
+        <Route path="/accounts/edit/:id" element={<EditAccountPage />} />
+
+        <Route path="/notifications" element={<NotificationPage />} />
+        <Route path="/landingpage" element={<LandingPage />} />
+        <Route path="newgoal" element={<AddNewGoalPage />} />
       </Routes>
     </BrowserRouter>
   );
