@@ -8,7 +8,7 @@ import {
   Wallet,
   BellRing,
 } from "lucide-react";
-import Sidebar from "../../components/Sidebar";
+import Sidebar from "../../layouts/Sidebar";
 import Header from "../../components/Header";
 
 const formatRupiah = (value) => {

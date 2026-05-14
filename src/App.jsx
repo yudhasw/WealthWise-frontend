@@ -5,8 +5,10 @@ import DashboardPage from "./pages/dashboard/DashboardPage";
 import TransactionsPage from "./pages/transactions/TransactionPage";
 import AddTransactionsPage from "./pages/transactions/AddTransactionPage";
 import ProfilePage from "./pages/profile/ProfilePage";
-import SmartPlanning from "./pages/smarplanning/Smartplanning";
-import AddNewGoalPage from "./pages/smarplanning/AddNewGoalPage";
+import SmartPlanning from "./pages/smartplanning/Smartplanning";
+import AddNewGoalPage from "./pages/smartplanning/AddNewGoalPage";
+import EditGoalPage from "./pages/smartplanning/EditGoalPage";
+import ViewAllGoals from "./pages/smartplanning/ViewAllGoals";
 
 function App() {
   return (
@@ -21,6 +23,8 @@ function App() {
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/smart-planning" element={<SmartPlanning />} />
         <Route path="/smart-planning/add-goal" element={<AddNewGoalPage />} />
+        <Route path="/smart-planning/edit/:id"element={<EditGoalPage />}/>
+        <Route path="/smart-planning/active-goals"element={<ViewAllGoals />}/>
       </Routes>
     </BrowserRouter>
   );
